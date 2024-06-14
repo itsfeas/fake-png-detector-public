@@ -1,0 +1,32 @@
+{
+  "name": "chrome-ext",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx webpack",
+    "build-prod": "webpack --mode production",
+    "serve": "npm run build && npx http-server .. -c-1 -p 3000",
+    "dev": "webpack-dev-server --mode development"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/blueimp-load-image": "^5.16.6",
+    "@types/ndarray": "^1.0.14",
+    "@types/ndarray-ops": "^1.2.7",
+    "copy-webpack": "^4.2.0",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "dependencies": {
+    "blueimp-load-image": "^5.16.0",
+    "ndarray": "^1.0.19",
+    "ndarray-ops": "^1.2.2",
+    "onnxruntime-web": "^1.18.0"
+  }
+}
