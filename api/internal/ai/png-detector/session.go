@@ -2,16 +2,18 @@ package png_detector
 
 import (
 	ort "github.com/yalue/onnxruntime_go"
+	"sync"
 )
 
 const ImageSize = 224
 
-type FakePngDetectorModel struct {
+type FakePngDetectorSession struct {
 	*ort.Session[float32]
 	ImageSize int16
+	Mut       *sync.Mutex
 }
 
-func InitializeSession(modelPath string) (*FakePngDetectorModel, error) {
+func InitializeSession(modelPath string) (*FakePngDetectorSession, error) {
 	err := ort.InitializeEnvironment()
 	if err != nil {
 		return nil, err
@@ -33,9 +35,10 @@ func InitializeSession(modelPath string) (*FakePngDetectorModel, error) {
 		[]*ort.Tensor[float32]{inputTensor}, []*ort.Tensor[float32]{outputTensor})
 	defer session.Destroy()
 
-	sessionWrapper := FakePngDetectorModel{
+	sessionWrapper := FakePngDetectorSession{
 		session,
 		ImageSize,
+		new(sync.Mutex),
 	}
 	return &sessionWrapper, nil
 }
