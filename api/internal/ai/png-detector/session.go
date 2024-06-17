@@ -2,6 +2,7 @@ package png_detector
 
 import (
 	ort "github.com/yalue/onnxruntime_go"
+	"os"
 )
 
 const ImageSize = 224
@@ -12,7 +13,12 @@ type FakePngDetectorSession struct {
 }
 
 func InitializeSession(modelPath string) (*FakePngDetectorSession, error) {
-	err := ort.InitializeEnvironment()
+	_, err := os.Stat(modelPath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = ort.InitializeEnvironment()
 	if err != nil {
 		return nil, err
 	}
