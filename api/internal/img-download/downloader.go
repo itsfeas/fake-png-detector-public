@@ -1,6 +1,7 @@
 package img_download
 
 import (
+	"fake-png-detector.mod/internal/env"
 	"io"
 	"net/http"
 	"os"
@@ -10,14 +11,13 @@ type ImgDownloader struct {
 	downloadDir string
 }
 
-var imgDownloader ImgDownloader
-
-func GetDownloader() *ImgDownloader {
-	return &imgDownloader
-}
-
 func InitializeDownloader(downloadDir string) *ImgDownloader {
 	return &ImgDownloader{downloadDir: downloadDir}
+}
+
+func (*ImgDownloader) DefaultDownloader() *ImgDownloader {
+	envMap := *env.GetEnvMap()
+	return InitializeDownloader(envMap["IMG_DOWNLOAD_DIR"])
 }
 
 func Download(downloader *ImgDownloader, url string, fileName string) (string, error) {
