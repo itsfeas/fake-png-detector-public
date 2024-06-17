@@ -12,8 +12,8 @@ func GetEnvMap() *map[string]string {
 	return &envMap
 }
 
-func InitializeEnvMap(downloadDir string) error {
-	env, err := godotenv.Read()
+func InitializeEnvMap(path string) error {
+	env, err := godotenv.Read(path)
 	if err != nil {
 		return err
 	}
