@@ -2,7 +2,6 @@ package png_detector
 
 import (
 	ort "github.com/yalue/onnxruntime_go"
-	"sync"
 )
 
 const ImageSize = 224
@@ -10,7 +9,6 @@ const ImageSize = 224
 type FakePngDetectorSession struct {
 	*ort.Session[float32]
 	ImageSize int16
-	Mut       *sync.Mutex
 }
 
 func InitializeSession(modelPath string) (*FakePngDetectorSession, error) {
@@ -38,7 +36,6 @@ func InitializeSession(modelPath string) (*FakePngDetectorSession, error) {
 	sessionWrapper := FakePngDetectorSession{
 		session,
 		ImageSize,
-		new(sync.Mutex),
 	}
 	return &sessionWrapper, nil
 }
