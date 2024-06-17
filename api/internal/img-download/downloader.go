@@ -16,9 +16,8 @@ func GetDownloader() *ImgDownloader {
 	return &imgDownloader
 }
 
-func (*ImgDownloader) InitializeDownloader(downloadDir string) error {
-	imgDownloader = ImgDownloader{downloadDir}
-	return nil
+func InitializeDownloader(downloadDir string) *ImgDownloader {
+	return &ImgDownloader{downloadDir: downloadDir}
 }
 
 func Download(downloader *ImgDownloader, url string, fileName string) (string, error) {
