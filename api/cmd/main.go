@@ -28,7 +28,7 @@ func main() {
 	fmt.Println("Hello, World!")
 	pool := pngdetector.GetSessionPool()
 	{
-		p := pngdetector.GetSession(pool)
+		pngdetector.GetSession(pool)
 	}
 	fmt.Println("Hello, World!2")
 }
