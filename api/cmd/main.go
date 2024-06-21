@@ -19,6 +19,11 @@ func main() {
 
 	envMap := *env.GetEnvMap()
 	ort.SetSharedLibraryPath(envMap["ORT_LIB_PATH"])
+	err := ort.InitializeEnvironment()
+	if err != nil {
+		fmt.Printf("could not initialize ORT env\n%v\n", err)
+		return
+	}
 
 	if err := pngdetector.InitializeSessionPool(); err != nil {
 		fmt.Printf("%v", err)
@@ -28,8 +33,10 @@ func main() {
 	pool := pngdetector.GetSessionPool()
 	{
 		for i := range 10 * pool.MaxSessions {
-			fmt.Printf("Get session %d!\n", i)
-			pngdetector.GetSession(pool)
+			go func() {
+				pngdetector.GetSession(pool)
+				fmt.Printf("Got session %d!\n", i)
+			}()
 		}
 	}
 }

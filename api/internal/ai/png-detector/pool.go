@@ -3,7 +3,6 @@ package png_detector
 import (
 	"fake-png-detector.mod/internal/env"
 	"fmt"
-	ort "github.com/yalue/onnxruntime_go"
 	"strconv"
 	"sync"
 )
@@ -30,11 +29,6 @@ func InitializeSessionPool() error {
 
 	if err != nil {
 		return fmt.Errorf("error while parsing max ort sessions: %v\n", err)
-	}
-
-	err = ort.InitializeEnvironment()
-	if err != nil {
-		return fmt.Errorf("could not initialize ORT env\n%v\n", err)
 	}
 
 	newPool, err := NewPool(int8(maxSessions), modelPath)
