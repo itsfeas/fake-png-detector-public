@@ -25,10 +25,11 @@ func main() {
 		return
 	}
 
-	fmt.Println("Hello, World!")
 	pool := pngdetector.GetSessionPool()
 	{
-		pngdetector.GetSession(pool)
+		for i := range 10 * pool.MaxSessions {
+			fmt.Printf("Get session %d!\n", i)
+			pngdetector.GetSession(pool)
+		}
 	}
-	fmt.Println("Hello, World!2")
 }

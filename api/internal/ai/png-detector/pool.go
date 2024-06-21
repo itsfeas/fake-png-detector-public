@@ -13,7 +13,7 @@ type SessionPool struct {
 	modelPath   string
 	mut         *sync.Mutex
 	cond        *sync.Cond
-	maxSessions int8
+	MaxSessions int8
 }
 
 var sessionPool SessionPool
@@ -45,7 +45,7 @@ func NewPool(maxSessions int8, modelPath string) (*SessionPool, error) {
 		modelPath:   modelPath,
 		mut:         new(sync.Mutex),
 		cond:        new(sync.Cond),
-		maxSessions: maxSessions,
+		MaxSessions: maxSessions,
 	}
 	newPool.mut.Lock()
 	for i := range maxSessions {
