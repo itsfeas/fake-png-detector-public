@@ -5,6 +5,8 @@ import (
 	"fake-png-detector.mod/internal/env"
 	"fmt"
 	ort "github.com/yalue/onnxruntime_go"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -31,12 +33,16 @@ func main() {
 	}
 
 	pool := pngdetector.GetSessionPool()
-	{
-		for i := range 10 * pool.MaxSessions {
-			go func() {
-				pngdetector.GetSession(pool)
-				fmt.Printf("Got session %d!\n", i)
-			}()
-		}
+	var wait sync.WaitGroup
+	for i := range 10 * pool.MaxSessions {
+		go func() {
+			wait.Add(1)
+			defer wait.Done()
+			_, clean := pngdetector.GetSession(pool)
+			defer clean()
+			time.Sleep(50 * time.Millisecond)
+			fmt.Printf("Got session %d!\n", i)
+		}()
 	}
+	wait.Wait()
 }

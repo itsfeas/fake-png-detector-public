@@ -40,12 +40,13 @@ func InitializeSessionPool() error {
 }
 
 func NewPool(maxSessions int8, modelPath string) (*SessionPool, error) {
+	mut := sync.Mutex{}
 	newPool := SessionPool{
 		sessions:    make([]*FakePngDetectorSession, maxSessions),
 		queue:       make([]int8, maxSessions),
 		modelPath:   modelPath,
-		mut:         new(sync.Mutex),
-		cond:        new(sync.Cond),
+		mut:         &mut,
+		cond:        sync.NewCond(&mut),
 		MaxSessions: maxSessions,
 	}
 	newPool.mut.Lock()
@@ -55,13 +56,13 @@ func NewPool(maxSessions int8, modelPath string) (*SessionPool, error) {
 			return nil, err
 		}
 		newPool.sessions[i] = newSession
-		newPool.queue = append(newPool.queue, i)
+		newPool.queue[i] = i
 	}
 	newPool.mut.Unlock()
 	return &newPool, nil
 }
 
-func GetSession(pool *SessionPool) *FakePngDetectorSession {
+func GetSession(pool *SessionPool) (*FakePngDetectorSession, func()) {
 	pool.mut.Lock()
 	for len(pool.queue) == 0 {
 		pool.cond.Wait()
@@ -70,8 +71,7 @@ func GetSession(pool *SessionPool) *FakePngDetectorSession {
 	session := pool.sessions[0]
 	pool.queue = pool.queue[1:]
 	pool.mut.Unlock()
-	defer FinishSession(pool, sessionId)
-	return session
+	return session, func() { FinishSession(pool, sessionId) } // return callback to finish the session
 }
 
 func FinishSession(pool *SessionPool, idx int8) {
