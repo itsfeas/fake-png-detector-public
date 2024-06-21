@@ -9,7 +9,7 @@ import (
 const ImageSize = 224
 
 type FakePngDetectorSession struct {
-	*ort.Session[float32]
+	*ort.DynamicSession[float32, float32]
 	ImageSize int16
 }
 
@@ -24,21 +24,7 @@ func InitializeSession(modelPath string) (*FakePngDetectorSession, error) {
 		return nil, fmt.Errorf("could not initialize ORT env\n%v\n", err)
 	}
 
-	inputShape := ort.NewShape(1, 3, ImageSize, ImageSize)
-	inputTensor, err := ort.NewEmptyTensor[float32](inputShape)
-	if err != nil {
-		return nil, err
-	}
-	defer inputTensor.Destroy()
-
-	outputShape := ort.NewShape(2)
-	outputTensor, err := ort.NewEmptyTensor[float32](outputShape)
-	defer outputTensor.Destroy()
-
-	session, err := ort.NewSession[float32](modelPath,
-		[]string{"modelInput"}, []string{"modelOutput"},
-		[]*ort.Tensor[float32]{inputTensor}, []*ort.Tensor[float32]{outputTensor})
-	defer session.Destroy()
+	session, err := ort.NewDynamicSession[float32, float32](modelPath, []string{"modelInput"}, []string{"modelOutput"})
 
 	sessionWrapper := FakePngDetectorSession{
 		session,
