@@ -1,6 +1,7 @@
 package png_detector
 
 import (
+	"fmt"
 	ort "github.com/yalue/onnxruntime_go"
 	"os"
 )
@@ -20,7 +21,7 @@ func InitializeSession(modelPath string) (*FakePngDetectorSession, error) {
 
 	err = ort.InitializeEnvironment()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not initialize ORT env\n%v\n", err)
 	}
 
 	inputShape := ort.NewShape(1, 3, ImageSize, ImageSize)
